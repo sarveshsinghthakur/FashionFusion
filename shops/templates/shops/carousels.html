@@ -1,0 +1,133 @@
+<script>
+function getCartFromLocalStorage() {
+    try {
+        const cart = JSON.parse(localStorage.getItem('cart'));
+        if (cart && typeof cart === 'object') {
+            return cart;
+        }
+        return {};
+    } catch (e) {
+        console.error("Error parsing cart from localStorage", e);
+        return {};
+    }
+}
+
+var cart = getCartFromLocalStorage();
+
+function updateCart(cart) {
+    console.log("Updating cart:", cart);
+    for (var item in cart) {
+        var element = document.getElementById('divpr' + item);
+        if (element) {
+            element.innerHTML = "<button id='minus" + item + "' class='btn btn-primary minus'>-</button> <span id='val" + item + "'>" + cart[item][0] + "</span> <button id='plus" + item + "' class='btn btn-primary plus'>+</button>";
+        }
+    }
+    updatepop(cart);
+    localStorage.setItem('cart', JSON.stringify(cart));
+}
+
+$(document).on("click", "button.minus", function() {
+    var a = this.id.slice(5);
+    console.log(a);
+    cart[a][0] = cart[a][0] - 1;
+    if (cart[a][0] == 0) {
+        document.getElementById('divpr'+a).innerHTML=`<button href="#" id='{{i.product_id}}' class="btn btn-primary cart">Add To Cart</button>`
+        delete cart[a];
+        document.getElementById('carty').innerHTML = Object.keys(cart).length;
+        document.getElementById('popy').innerHTML=`<button class="btn btn-primary my-2 mx-2 clear" id="clearcart">CLEAR CART</button>";`
+    }
+    document.getElementById('val' + a).innerHTML = cart[a] ? cart[a][0] : 0;
+    document.getElementById('carty').innerHTML = Object.keys(cart).length;
+    updateCart(cart);
+});
+
+$(document).on("click", "button.plus", function() {
+    var a = this.id.slice(4);
+    cart[a][0] = cart[a][0] + 1;
+    document.getElementById('val' + a).innerHTML = cart[a][0];
+    document.getElementById('carty').innerHTML = Object.keys(cart).length;
+    updateCart(cart);
+});
+
+$(document).on("click", ".cart", function() {
+    var str = this.id.toString();
+    if (cart[str]) {
+        cart[str][0] = cart[str][0] + 1;
+    } else {
+        var qty = 1;
+        var name = document.getElementById('name' + str).innerHTML;
+        var price = document.getElementById('price' + str).innerHTML.toString();
+        cart[str] = [qty, name, price];
+       
+    }
+    updateCart(cart);
+    document.getElementById('carty').innerHTML = Object.keys(cart).length;
+});
+
+function updatepop(cart) {
+    var popstr = '<h5 class="mx-2">Your Cart Items</h5>';
+    var i = 1;
+
+    for (var item in cart) {
+        var element = document.getElementById('name' + item);
+        if (element) {
+            popstr += '<li><a class="dropdown-item" href="#"><b>' + i + '-</b>' + cart[item][1].slice(0, 20) + '-' + `<i>(${cart[item][0]})</i>₹${cart[item][2]}<br></a></li>`;
+            i += 1;
+        }
+    }
+    popstr += '<button class="btn btn-primary my-2 mx-2 clear" id="clearcart">CLEAR CART</button>';
+    document.getElementById('popy').innerHTML = popstr;
+}
+
+$(document).on('click', 'button.clear', function() {
+    cart = {};
+    localStorage.setItem('cart', JSON.stringify(cart));
+    var popblank = '<h5>Your Cart Items</h5><br>' +
+                   '<button class="btn btn-primary my-2 mx-2 clearcart" id="clearcart">CLEAR CART</button>';
+    document.getElementById('popy').innerHTML = popblank;
+    document.getElementById('carty').innerHTML = 0;
+    //document.getElementById('divpr'+ for(var item in range){i}).innerHTML=`<button href="#" id='{{i.product_id}}' class="btn btn-primary cart">Add To Cart</button>`
+});
+
+$(document).ready(function() {
+    updateCart(cart);
+});
+
+function updatecheckcart() {
+    var cart = getCartFromLocalStorage();
+    var cartstr = "";
+    var i = 1;
+    var totalprice = 0;
+
+    for (var k in cart) {
+        var quantity = cart[k][0];
+        var itemName = cart[k][1];
+        var itemPrice = cart[k][2];
+        if (itemName) {
+            cartstr += '<li class="list-group-item">' + '<b>' + i + "-</b>" + '<b>' + itemName + "</b>" + " - " + `<b>(${cart[k][0]})</b>` + " ₹" + itemPrice + '<br></li>';
+            i++;
+            totalprice += parseFloat(quantity)*parseFloat(itemPrice);
+        }
+    }
+
+    if (Object.keys(cart).length === 0) {
+        cartstr = '<li class="list-group-item">Nothing in the cart</li>';
+    }
+    document.getElementById('totalamount').innerHTML=totalprice;
+    document.getElementById('checkcart').innerHTML = cartstr;
+    $('#amounts').val(totalprice);
+    console.log(document.getElementById('totalamount').innerHTML)
+}
+
+$(document).ready(function() {
+    updatecheckcart();
+});
+
+$('#itemsJson').val(JSON.stringify(cart));
+{% if thank %}
+alert('Thanks for ordering with us. Your order ID is {{id}}. Use it to track your order using our order tracker');
+localStorage.clear('cart');
+document.location = "shops";
+{% endif %}
+
+</script>

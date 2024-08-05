@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us</title>
+    <style>
+        
+    </style>
+    {% include 'shops/bootstrap.html'%}
+    {% include 'shops/carousel.css'%} 
+</head>
+<body>
+    {% include 'shops/nav.html' %}
+    
+    <form class=" my-3" method="post" style="width: 600px; margin-left: 65vh;" action="contact">
+        {% csrf_token %}
+        <h3>CONTACT US </h3>
+        <div class="form-group">
+          <label for="name">Name</label>
+          <input type="text" class="form-control" required id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter your Name" name="name">
+        </div>
+        <div class="form-group">
+            <label for="exampleInputEmail1">Email address</label>
+            <input type="email" class="form-control" required id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter your email" name="email">
+          </div>
+          <div class="form-group">
+            <label for="Phoneno.">Phone Number</label>
+            <input type="tel" class="form-control" required id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter your number" name="number">
+          </div>
+          <div class="form-group">
+            <label for="exampleFormControlTextarea1">Write your Query</label>
+            <textarea class="form-control" id="exampleFormControlTextarea1" rows="4" name="query"></textarea>
+          </div>
+       
+        <button type="submit" class="btn btn-primary">Submit</button>
+     
+      </form>
+</body>
+</html>

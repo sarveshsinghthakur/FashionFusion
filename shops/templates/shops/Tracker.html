@@ -1,0 +1,94 @@
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tracker</title>
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Bootstrap CSS and JS -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <!-- Popper.js -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+</head>
+<body>
+    {% include 'shops/nav.html'%} 
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4" style="margin-top: 5vh;">
+                <form class="my-1" id="trackerform" action="Tracker" method="post">
+                    {% csrf_token %}
+                    <h2>Enter Your Details To Track Your Order :</h2>
+                    <div class="form-group">
+                        <label for="order_id">Order ID</label>
+                        <input type="tel" class="form-control" placeholder="Enter your order id" name="order_number" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email address</label>
+                        <input type="email" class="form-control" placeholder="Enter your email to verify" name="email" required>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="" id="flexCheckIndeterminate" required>
+                        <label class="form-check-label" for="flexCheckIndeterminate">
+                          I am not a robot
+                        </label>
+                      </div>
+                    <br>
+                    <button type="submit" class="btn btn-primary">TRACK</button>
+                </form>
+            </div>
+            <div class="col-md-6" style="margin-top: 5vh; margin-left: 15vh;">
+                <h1 style="margin-left: 20vh;">YOUR ORDER STATUS</h1>
+                <ul class="list-group my-2" id="trackitem" style="margin-left: 10vh"></ul> 
+               
+            </div>
+        </div>
+    </div>
+    <script>
+        $('#trackerform').submit(function(event) {
+            event.preventDefault();
+            $('#trackitem').empty();
+            var form_data = {
+                "order_number": $('input[name=order_number]').val(),
+                "email": $('input[name=email]').val(),
+                'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val()
+            };
+    
+            $.ajax({
+                type: 'POST',
+                url: '{% url "Tracker" %}',
+                data: form_data,
+                success: function(data) {
+                    try {
+                        if (Array.isArray(data) && data.length > 0) {
+                            $('#trackitem').empty();
+                            data.forEach(function(update) {
+                            let text = update['text'];
+                            let time = update['time'];
+                          
+                                let mystr = `<li class="list-group-item d-flex justify-content-between align-items-center">
+                                    ${text}
+                                    <span class="badge badge-primary badge-pill">${time}</span>
+                                </li>`;
+                               
+                                $('#trackitem').append(mystr);
+                                
+                            });
+                        } else {
+                            $('#trackitem').html(`<li class="list-group-item d-flex justify-content-between align-items-center">
+                                Sorry, we are not able to fetch this order id and email. Make sure to type the correct order Id and email.</li>`);
+                                  }
+                    } catch (e) {
+                        console.error('Error parsing JSON:', e);
+                        $('#trackitem').html('<li class="list-group-item d-flex justify-content-between align-items-center">An error occurred while processing the response.</li>');
+                    }
+                },
+               
+            });
+        });
+    </script>
+    
+</body>
+</html>

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>product</title>
+    {% include 'shops/bootstrap.html'%}
+    {% include 'shops/carousel.css'%} 
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    {% include 'shops/nav.html' %}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="container-outline-dark">
+                    <img src="/media/{{product.0.image}}" alt="" style="width: 400px; height: 455px; margin-top: 5vh; border-radius: 10%; border-color: 20px 0 10px 0 aqua;">
+                </div>
+            </div>
+    
+            <div class="col-md-7" style="left: 20vh; top: 10vh;">
+                <h5 class="card-title" id="pname">{{product.0.product_name}}</h5>
+                <p class="card-text">{{product.0.desc|slice:":53"}}...</p>
+                <b><p class="card-text">₹ {{product.0.price}}</p></b>
+                <h7 class="card-text">{{product.0.date}}</h7>
+                <br>
+             
+                    
+            </div>
+        </div>
+    </div>
+    <br>
+    {% include 'shops/carousels.html'%}
+</body>
+</html>
