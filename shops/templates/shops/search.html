@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Results - Cartisome</title>
+    <!-- Include Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/css/bootstrap.min.css">
+    {% include 'shops/carousels.html'%}   
+</head>
+<body>
+    {% include 'shops/nav.html' %}
+
+    <div class="container my-3">
+        {% if msg %}
+            <div class="alert alert-info" role="alert">
+                {{ msg }}
+            </div>
+        {% else %}
+            {% for product, range, nslides in allprods %}
+                <h4 class="d-flex justify-content-center align-items-center">Biggest sale of the year on: {{ product.0.category }}</h4>
+                <div id="demo{{ forloop.counter }}" class="carousel slide my-3" data-ride="carousel">
+                    <ul class="carousel-indicators">
+                        <li data-target="#demo{{ forloop.counter }}" data-slide-to="0" class="active"></li>
+                        {% for i in range %}
+                            <li data-target="#demo{{ forloop.parentloop.counter }}" data-slide-to="{{ i }}"></li>
+                        {% endfor %}
+                    </ul>
+                    <div class="container carousel-inner no-padding">
+                        <div class="carousel-item active">
+                            {% for i in product %}
+                                <div class="col-xs-3 col-sm-3 col-md-3">
+                                    <div class="card" style="width: 18rem;">
+                                        <img src='/media/{{ i.image }}' class="card-img-top" alt="..." style="margin-left: 30px; margin-top: 15px;">
+                                        <div class="card-body">
+                                            <h5 class="card-title" id="name{{ i.product_id }}">{{ i.product_name }}</h5>
+                                            <p class="card-text">{{ i.desc|slice:":53" }}...</p>
+                                            <b><span>₹ <span class="card-text" id="price{{ i.product_id }}">{{ i.price }}</span></span></b>
+                                            <h7 class="card-text">{{ i.date }}</h7>
+                                            <br>
+                                            <span class="divpr" id="divpr{{ i.product_id }}">
+                                                <button href="#" id='{{ i.product_id }}' class="btn btn-primary cart">Add To Cart</button>
+                                            </span>
+                                            <a href="product/{{ i.product_id }}"><button href="" id='qv-{{ i.product_id }}' class="btn btn-primary mx-2 my-1">View</button></a>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% if forloop.counter|divisibleby:4 and forloop.counter > 0 and not forloop.last %}
+                                    </div>
+                                    <div class="carousel-item">
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                <a class="carousel-control-prev" href="#demo{{ forloop.counter }}" role="button" data-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="sr-only">Previous</span>
+                </a>
+                <a class="carousel-control-next" href="#demo{{ forloop.counter }}" role="button" data-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="sr-only">Next</span>
+                </a>
+            {% endfor %}
+        {% endif %}
+    </div>
+
+    <!-- Include Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.min.js"></script>
+</body>
+</html>
